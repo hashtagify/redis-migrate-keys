@@ -14,14 +14,15 @@ Usage
 
 1.   Customize the `redis_from` and `redis_to` variables with the data of your two instances. The "from" instance can have authentication, but the "to" one can't
 1.   Customize the `patterns` variable with the patterns you want to migrate. The patterns must be in the form understood by the `keys` redis command
+2.   Stop any writing to the data for the duration of the script (you can read though)
 1.   Save and launch the script
 
 The script will iterate on each key matched by each pattern and migrate it; this will happen in sequence. Depending on your setup, it could be better to launch more instances of the script, each one with different patterns, to parallelize the execution.
 
-Keep in mind that the `keys` command is blocking and can take a long time, so executing it on a production, live instance isn't a good idea. Two possible solutions are:
+Keep in mind that the `keys` command is blocking and can take a long time, so executing it on a production, live instance, even if read-only, can create performance problems. Two possible solutions are:
 
 *   Create a slave instance of the source, and use that as redis_from
-*   If you can't create a new slave, and if it is acceptable to block the production instance for some seconds, you can split the pattern in many smaller sub-patterns (eg "patterna*", "patternb*" ... "patternz*")
+*   If you can't create a new slave, and if it is acceptable to block reading the production instance for some seconds, you can split the pattern in many smaller sub-patterns (eg "patterna*", "patternb*" ... "patternz*")
 
 License
 -------
